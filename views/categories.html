@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+  </head>
+  <body ng-app="myApp" ng-controller="myCtrl">
+    {{ firstName + " " + lastName }}
+
+    <table>
+      <!-- <tr ng-repeat="category in Categories">
+        <td>asdf</td>
+      </tr> -->
+    </table>
+
+
+    <form ng-submit="onFormSubmit()">
+      <label>Category Title:</label>
+      <input type="text" ng-model="newCategory.Title" required />
+
+      <label>Category Description:</label>
+      <input type="text" ng-model="newCategory.Description" />
+
+      <input type="submit" value="Submit">
+      <input type="reset" />
+    </form>
+
+    <input type="button" value="Close"
+        onclick="google.script.host.close()" />
+
+    <script type="text/javascript">
+      var app = angular.module("myApp", []);
+
+      app.controller("myCtrl", function($scope) {
+        $scope.firstName = "John";
+        $scope.lastName = "Doe";
+
+        $scope.loadData = function() {
+          $scope.newCategory = {};
+          google.script.run.withSuccessHandler(function(data) {
+            $scope.Categories = data;
+            $scope.$apply();
+          }).categories_GetData();
+        };
+
+        $scope.onFormSubmit = function() {
+          google.script.run.withSuccessHandler(function(data) {
+            $scope.newCategory = {};
+            $scope.Categories = data;
+            $scope.$apply();
+            return;
+          }).categories_AddCategory();
+        }
+
+        $scope.loadData();
+
+
+      });
+    </script>
+  </body>
+</html>

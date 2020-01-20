@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body>
+    <h1>Summary</h1>
+
+    <p>List of things:</p>
+    <? var things = GetSummaryData(); ?>
+    <ul>
+      <? for (var i in things) { ?>
+        <li><?= things[i] ?></li>
+      <? } ?>
+    </ul>
+
+    <input type="button" value="Close"
+        onclick="google.script.host.close()" />
+  </body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body>
+    <? var data = setup_GetData(); ?>
+    <form onsubmit="onSubmit(this)">
+      <div>
+        <label>Form Name:</label>
+        <input type="text" name="FormTitle" value="<?= data.FormTitle ?>" />
+      </div>
+
+      <div>
+        <label>Form Description:</label>
+        <input type="text" name="FormDescription" value="<?= data.FormDescription ?>" />
+      </div>
+
+      <div>
+        <label>Pre-Voting Message:</label>
+        <input type="text" name="PreVotingMessage" value="<?= data.PreVotingMessage ?>" />
+      </div>
+
+      <div>
+        <label>Post-Voting Message:</label>
+        <input type="text" name="PostVotingMessage" value="<?= data.PostVotingMessage ?>" />
+      </div>
+
+      <input type="reset" value="Reset" />
+      <input type="submit" value="Submit & Close" />
+    </form>
+
+    <input type="button" value="Close"
+        onclick="google.script.host.close()" />
+
+    <script type="text/javascript">
+      function onSubmit(formObject) {
+        google.script.run.withSuccessHandler(onFormSubmitSuccess)
+          .withFailureHandler(onFormSubmitFailure)
+          .setup_SaveData(formObject);
+      }
+
+      function onFormSubmitSuccess() {
+        google.script.host.close();
+        return;
+      }
+
+      function onFormSubmitFailure(err) {
+        alert(err);
+        return;
+      }
+    </script>
+  </body>
+</html>
