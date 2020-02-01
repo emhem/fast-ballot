@@ -1,21 +1,16 @@
 import { Accessors } from "./accessors";
 
 export function setup_GetData(): ISetupData {
+  const form = FormApp.getActiveForm();
   return {
-    FormTitle: Accessors.GetFormTitle(),
-    FormDescription: Accessors.GetFormDescription(),
+    FormURL: form.getPublishedUrl(),
     PreVotingMessage: Accessors.GetPreVotingMessage(),
-    PostVotingMessage: Accessors.GetPostVotingMessage()
+    PostVotingMessage: Accessors.GetPostVotingMessage(),
+    Categories: Accessors.GetCategories()
   }
 }
 
-export function setup_SaveData(formObject: ISetupData): void {
-  if (formObject.FormTitle != Accessors.GetFormTitle()) {
-    Accessors.SetFormTitle(formObject.FormTitle);
-  }
-  if (formObject.FormDescription != Accessors.GetFormDescription()) {
-    Accessors.SetFormDescription(formObject.FormDescription);
-  }
+export function setup_SaveClosedFormDisplayInfo(formObject: IClosedFormDisplayInfo): void {
   if (formObject.PreVotingMessage != Accessors.GetPreVotingMessage()) {
     Accessors.SetPreVotingMessage(formObject.PreVotingMessage);
   }
@@ -25,9 +20,37 @@ export function setup_SaveData(formObject: ISetupData): void {
   return;
 }
 
+export function setup_AddCategory(formObject: INewCategoryInfo) {
+  if (!formObject) { return; }
+  if (!formObject.Title) {
+    throw "Title is required.";
+  }
+
+  const category = new Accessors.Category();
+  category.Title = formObject.Title;
+  category.Description = formObject.Description;
+  Accessors.AddCategory(category);
+  return;
+}
+
+export function setup_RemoveCategory(id: number) {
+  Accessors.RemoveCategory(id);
+  return;
+}
+
 interface ISetupData {
-  FormTitle: string;
-  FormDescription: string;
+  FormURL: string;
   PreVotingMessage: string;
   PostVotingMessage: string;
+  Categories: Accessors.Category[];
+}
+
+interface IClosedFormDisplayInfo {
+  PreVotingMessage: string;
+  PostVotingMessage: string;
+}
+
+interface INewCategoryInfo {
+  Title: string;
+  Description: string;
 }

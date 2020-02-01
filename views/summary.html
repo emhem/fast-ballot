@@ -2,17 +2,28 @@
 <html>
   <head>
     <base target="_top">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   </head>
   <body>
-    <h1>Summary</h1>
+    <? var data = GetSummaryData();
+      if (data.IsVotingOpen) { ?>
+        Voting is <b>open</b>. <?= data.NumberOfResponses ?> responses collected so far.
+    <? } else { ?>
+      Voting is <b>closed</b>. <?= data.NumberOfResponses ?> responses collected so far.
+    <? } ?>
 
-    <p>List of things:</p>
-    <? var things = GetSummaryData(); ?>
-    <ul>
-      <? for (var i in things) { ?>
-        <li><?= things[i] ?></li>
-      <? } ?>
-    </ul>
+    <h1>Categories</h1>
+    <? for (var i in data.Categories) { ?>
+      <div><?= i ?></div>
+    <? } ?>
+
+    <h1>Entries</h1>
+
+
+
+
+
+
 
     <input type="button" value="Close"
         onclick="google.script.host.close()" />

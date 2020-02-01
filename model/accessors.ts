@@ -1,23 +1,5 @@
 export module Accessors {
 
-  export function GetFormTitle(): string {
-    return FormApp.getActiveForm().getTitle();
-  }
-
-  export function SetFormTitle(title: string): void {
-    FormApp.getActiveForm().setTitle(title)
-    return;
-  }
-
-  export function GetFormDescription(): string {
-    return FormApp.getActiveForm().getDescription();
-  }
-
-  export function SetFormDescription(description: string): void {
-    FormApp.getActiveForm().setDescription(description);
-    return;
-  }
-
   export function GetPreVotingMessage(): string {
     let val = PropertiesService.getDocumentProperties().getProperty("PRE_VOTING_MESSAGE");
     if (val) {
@@ -62,7 +44,8 @@ export module Accessors {
   }
 
   export function AddCategory(category: Category): void {
-    const lastIdx = parseInt(PropertiesService.getDocumentProperties().getProperty("CATEGORIES_LAST_IDX"));
+    let lastIdx = parseInt(PropertiesService.getDocumentProperties().getProperty("CATEGORIES_LAST_IDX"));
+    if (!lastIdx) { lastIdx = 0; }
     const newIdx = lastIdx+1;
     PropertiesService.getDocumentProperties().setProperty("CATEGORIES_TITLE_" + newIdx, category.Title);
     PropertiesService.getDocumentProperties().setProperty("CATEGORIES_DESCRIPTION_" + newIdx, category.Description);

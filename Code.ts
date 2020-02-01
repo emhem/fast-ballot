@@ -15,13 +15,15 @@ function onInstall(e: GoogleAppsScript.Events.AddonOnInstall): void {
 function onOpen(e: GoogleAppsScript.Events.FormsOnOpen): void {
   FormApp.getUi().createMenu("Fast Ballot")
     .addItem("Summary", "showSummarySidebar")
-    .addItem("1. Basic Setup", "showSetupDialog")
+    .addItem("1. Basic Setup & Set Categories", "showSetupDialog")
     .addItem("2. Make the Link Public", "showPublicLink")
-    .addItem("3. Set Categories", "showCategoriesDialog")
     .addItem("4. Add Entries", "showEntriesDialog")
     .addItem("5. Open Voting", "showOpenVotingPrompt")
     .addItem("6. Close Voting & Tabulate Results", "closeVotingAndShowResultsDialog")
     .addToUi();
+
+
+    //.addItem("3. Set Categories", "showCategoriesDialog")
   return;
 }
 

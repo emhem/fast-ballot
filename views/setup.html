@@ -2,46 +2,87 @@
 <html>
   <head>
     <base target="_top">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
   </head>
-  <body>
-    <? var data = setup_GetData(); ?>
-    <form onsubmit="onSubmit(this)">
-      <div>
-        <label>Form Name:</label>
-        <input type="text" name="FormTitle" value="<?= data.FormTitle ?>" />
+  <body ng-app="myApp" ng-controller="myCtrl">
+    <div class="w3-top">
+      <div class="w3-bar w3-gray">
+        <a class="w3-bar-item w3-tiny" href="#sec_url">URL</a>
+        <a class="w3-bar-item w3-tiny" href="#sec_closedFormDisplay">Closed Form Display</a>
+        <div class="w3-bar-item w3-tiny">Close Form</div>
+        <div class="w3-bar-item w3-tiny">Categories</div>
+        <a class="w3-bar-item w3-small" href="#" onclick="google.script.host.close()">Close</a>
       </div>
+    </div>
 
-      <div>
-        <label>Form Description:</label>
-        <input type="text" name="FormDescription" value="<?= data.FormDescription ?>" />
-      </div>
+    <div class="w3-container w3-padding-64">
 
-      <div>
+      <h1 id="sec_url" class="w3-xlarge">URL</h1>
+      <input type="text" class="w3-input w3-border w3-round" ng-model="data.FormURL" readonly />
+
+      <hr />
+
+      <h1 id="sec_closedFormDisplay" class="w3-xlarge">Closed Form Display</h1>
+      <form ng-submit="onClosedFormDisplaySubmit" class="w3-container">
+
         <label>Pre-Voting Message:</label>
-        <input type="text" name="PreVotingMessage" value="<?= data.PreVotingMessage ?>" />
-      </div>
+        <input type="text" class="w3-input w3-border w3-round"  name="PreVotingMessage" ng-model="data.PreVotingMessage" />
 
-      <div>
         <label>Post-Voting Message:</label>
-        <input type="text" name="PostVotingMessage" value="<?= data.PostVotingMessage ?>" />
+        <input type="text" class="w3-input w3-border w3-round"  name="PostVotingMessage" ng-model="data.PostVotingMessage" />
+
+        <input class="w3-btn" type="reset" value="Reset" />
+        <input class="w3-btn" type="submit" value="Submit" />
+      </form>
+
+      <hr />
+
+      <button class="w3-btn w3-large">Close Form & Set Pre-Voting Message</button>
+
+      <hr />
+
+      <h1 class="w3-xlarge">Categories</h1>
+      <div ng-repeat="category in data.Categories">
+        {{category.Title}}
+        {{category.Description}}
       </div>
 
-      <input type="reset" value="Reset" />
-      <input type="submit" value="Submit & Close" />
-    </form>
+      <form onsubmit="onNewCategorySubmit(this)" class="w3-container">
+        <h2 class="w3-large">New Category</h2>
+
+        <label>Title:</label>
+        <input type="text" class="w3-input w3-border w3-round" ng-model="newCategory.Title"  />
+
+        <label>Description:</label>
+        <input type="text" class="w3-input w3-border w3-round" ng-model="newCategory.Description"  />
+
+        <input class="w3-btn" type="reset" value="Reset" />
+        <input class="w3-btn" type="submit" value="Submit" />
+      </form>
+
+    </div>
 
     <input type="button" value="Close"
         onclick="google.script.host.close()" />
 
     <script type="text/javascript">
-      function onSubmit(formObject) {
+      function onClosedFormDisplaySubmit(formObject) {
         google.script.run.withSuccessHandler(onFormSubmitSuccess)
           .withFailureHandler(onFormSubmitFailure)
-          .setup_SaveData(formObject);
+          .setup_SaveClosedFormDisplayInfo(formObject);
+        return;
+      }
+
+      function onNewCategorySubmit(formObject) {
+        google.script.run.withSuccessHandler(onFormSubmitSuccess)
+          .withFailureHandler(onFormSubmitFailure)
+          .setup_AddCategory(formObject);
+        return;
       }
 
       function onFormSubmitSuccess() {
-        google.script.host.close();
+        <? data = setup_GetData(); ?>
         return;
       }
 
@@ -49,6 +90,43 @@
         alert(err);
         return;
       }
+
+      function removeCategory(id) {
+        google.script.run.withSuccessHandler(onCategoryListChanged)
+          .withFailureHandler(onFormSubmitSuccess)
+          .setup_RemoveCategory(id);
+        return;
+      }
+
+      var app = angular.module("myApp", []);
+      app.controller("myCtrl", function($scope) {
+
+        /* Load Data */
+        $scope.LoadData = function() {
+          $scope.newCategory = {};
+          google.script.run.withSuccessHandler(function(data) {
+            $scope.data = data;
+            $scope.$apply();
+          }).setup_GetData();
+          return;
+        };
+
+        /**$scope.onClosedFormDisplaySubmit(formObject) {
+          google.script.run.withSuccessHandler($scope.LoadData())
+            .withFailureHandler(function(err) {
+              alert(err);
+              $scope.LoadData();
+            })
+            .setup_SaveClosedFormDisplayInfo(formObject);
+          return;
+        }**/
+
+        $scope.LoadData();
+
+      });
+
+
+
     </script>
   </body>
 </html>
