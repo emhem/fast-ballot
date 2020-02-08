@@ -4,92 +4,82 @@
     <base target="_top">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
+    <style>
+      .eah-fixed-overlay {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+    </style>
   </head>
-  <body ng-app="myApp" ng-controller="myCtrl">
-    <div class="w3-top">
-      <div class="w3-bar w3-gray">
-        <a class="w3-bar-item w3-tiny" href="#sec_url">URL</a>
-        <a class="w3-bar-item w3-tiny" href="#sec_closedFormDisplay">Closed Form Display</a>
-        <div class="w3-bar-item w3-tiny">Close Form</div>
-        <div class="w3-bar-item w3-tiny">Categories</div>
-        <a class="w3-bar-item w3-small" href="#" onclick="google.script.host.close()">Close</a>
-      </div>
+  <body ng-app="myApp" ng-controller="myCtrl" class="w3-container">
+
+  <div class="w3-light-grey w3-opacity eah-fixed-overlay" ng-show="isLoading">Please hold...</div>
+
+  <h1 onclick="accordion('sec_closedFormDisplay')" class="w3-xlarge">Closed Form Display</h1>
+  <div id="sec_closedFormDisplay" class="w3-container w3-hide eah-accordion">
+    <form ng-submit="onClosedFormDisplaySubmit()" name="closedDisplayForm">
+      <p>What do people see when voting is closed?</p>
+      <p>
+        <label><b>Before voting has opened they'll see:</b></label>
+        <input type="text" class="w3-input" name="PreVotingMessage" ng-model="data.ClosedFormDisplayInfo.PreVotingMessage" />
+        <label><input type="checkbox" class="w3-check" ng-model="data.ClosedFormDisplayInfo.ShowPreVotingCategoryPreview" />Include a preview of the categories</label>
+      </p>
+      <p>
+        <label><b>After voting has closed they'll see:</b></label>
+        <input type="text" class="w3-input" ng-model="data.ClosedFormDisplayInfo.PostVotingMessage" />
+      </p>
+      <p>
+        <input class="w3-btn" type="submit" value="Submit" ng-disabled="closedDisplayForm.$pristine || closedDisplayForm.$invalid" />
+        <input class="w3-btn w3-right" ng-click="resetClosedFormDisplay()" type="button" value="Reset" ng-disabled="closedDisplayForm.$pristine" />
+      </p>
+    </form>
+  </div>
+
+  <h1 onclick="accordion('sec_categories')" class="w3-xlarge">Categories</h1>
+  <div id="sec_categories" class="w3-container w3-hide eah-accordion">
+    <ul class="w3-ul w3-border">
+      <li class="w3-row"  ng-repeat="category in data.Categories">
+        <span ng-click="removeCategory(category.ID)" class="w3-col w3-right w3-button w3-xlarge" style="width:75px">&times;</span>
+        <div class="w3-rest">
+          <span>{{category.Title}}</span><br>
+          <span class="w3-small">{{category.Description}}</span>
+        </div>
+      </li>
+      <li>
+          <h2 onclick="expandable('form_newCategory')" class="w3-large">New Category</h2>
+          <form id="form_newCategory" ng-submit="onNewCategorySubmit()" name="newCategoryForm" class="w3-container w3-hide">
+            <p>
+              <label>Title:</label>
+              <input type="text" class="w3-input" ng-model="newCategory.Title" />
+            </p>
+            <p>
+              <label>Description:</label>
+              <input type="text" class="w3-input" ng-model="newCategory.Description" />
+            </p>
+            <p>
+              <input class="w3-btn" type="submit" value="Submit" ng-disabled="newCategoryForm.$pristine || newCategoryForm.$invalid" />
+              <input class="w3-btn w3-right" type="reset" value="Reset" ng-disabled="newCategoryForm.$pristine" />
+            </p>
+          </form>
+        </li>
+      </ul>
     </div>
 
-    <div class="w3-container w3-padding-64">
-
-      <h1 id="sec_url" class="w3-xlarge">URL</h1>
-      <input type="text" class="w3-input w3-border w3-round" ng-model="data.FormURL" readonly />
-
-      <hr />
-
-      <h1 id="sec_closedFormDisplay" class="w3-xlarge">Closed Form Display</h1>
-      <form ng-submit="onClosedFormDisplaySubmit" class="w3-container">
-
-        <label>Pre-Voting Message:</label>
-        <input type="text" class="w3-input w3-border w3-round"  name="PreVotingMessage" ng-model="data.PreVotingMessage" />
-
-        <label>Post-Voting Message:</label>
-        <input type="text" class="w3-input w3-border w3-round"  name="PostVotingMessage" ng-model="data.PostVotingMessage" />
-
-        <input class="w3-btn" type="reset" value="Reset" />
-        <input class="w3-btn" type="submit" value="Submit" />
-      </form>
-
-      <hr />
-
-      <button class="w3-btn w3-large">Close Form & Set Pre-Voting Message</button>
-
-      <hr />
-
-      <h1 class="w3-xlarge">Categories</h1>
-      <div ng-repeat="category in data.Categories">
-        {{category.Title}}
-        {{category.Description}}
-      </div>
-
-      <form onsubmit="onNewCategorySubmit(this)" class="w3-container">
-        <h2 class="w3-large">New Category</h2>
-
-        <label>Title:</label>
-        <input type="text" class="w3-input w3-border w3-round" ng-model="newCategory.Title"  />
-
-        <label>Description:</label>
-        <input type="text" class="w3-input w3-border w3-round" ng-model="newCategory.Description"  />
-
-        <input class="w3-btn" type="reset" value="Reset" />
-        <input class="w3-btn" type="submit" value="Submit" />
-      </form>
-
+    <h1 onclick="accordion('sec_makeItPublic')" class="w3-xlarge">Make it Public</h1>
+    <div id="sec_makeItPublic" class="w3-container w3-hide eah-accordion">
+      <button class="w3-btn w3-large" ng-click="setInitialClosedVotingState()">Close the form (Pre-voting state)</button>
+      <p>
+        <label>Send this link to everyone:</label>
+        <input type="text" class="w3-input" readonly ng-value="data.FormURL" />
+      </p>
     </div>
 
-    <input type="button" value="Close"
-        onclick="google.script.host.close()" />
 
     <script type="text/javascript">
-      function onClosedFormDisplaySubmit(formObject) {
-        google.script.run.withSuccessHandler(onFormSubmitSuccess)
-          .withFailureHandler(onFormSubmitFailure)
-          .setup_SaveClosedFormDisplayInfo(formObject);
-        return;
-      }
-
-      function onNewCategorySubmit(formObject) {
-        google.script.run.withSuccessHandler(onFormSubmitSuccess)
-          .withFailureHandler(onFormSubmitFailure)
-          .setup_AddCategory(formObject);
-        return;
-      }
-
-      function onFormSubmitSuccess() {
-        <? data = setup_GetData(); ?>
-        return;
-      }
-
-      function onFormSubmitFailure(err) {
-        alert(err);
-        return;
-      }
 
       function removeCategory(id) {
         google.script.run.withSuccessHandler(onCategoryListChanged)
@@ -98,28 +88,138 @@
         return;
       }
 
+      function accordion(id) {
+        var elems = document.getElementsByClassName('eah-accordion');
+        for (var i in elems) {
+          var elem = elems[i];
+          if (elem.id == id) {
+            if (elem.className.indexOf("w3-show") == -1) {
+              elem.className += " w3-show";
+            } else {
+              elem.className = elem.className.replace(" w3-show", "");
+            }
+          } else {
+            if (elem.className.indexOf("w3-show") != -1) {
+              elem.className = elem.className.replace(" w3-show", "");
+            }
+          }
+        }
+      }
+
+      function expandable(id) {
+        var elem = document.getElementById(id);
+        if (elem.className.indexOf("w3-show") == -1) {
+          elem.className += " w3-show";
+        } else {
+          elem.className = elem.className.replace(" w3-show", "");
+        }
+      }
+
+      function showErrorMessage(error, source) {
+        alert("An Error Occurred: " + error);
+        console.error("An error occurred at " + source + ": " + error);
+      }
+
       var app = angular.module("myApp", []);
       app.controller("myCtrl", function($scope) {
 
         /* Load Data */
         $scope.LoadData = function() {
           $scope.newCategory = {};
+          $scope.isLoading = true;
           google.script.run.withSuccessHandler(function(data) {
+            $scope.isLoading = false;
             $scope.data = data;
+            $scope.master = angular.copy($scope.data);
             $scope.$apply();
+          }).withFailureHandler(function(err) {
+            $scope.isLoading = false;
+            $scope.$apply();
+            showErrorMessage(err, "setup_GetData");
           }).setup_GetData();
           return;
         };
 
-        /**$scope.onClosedFormDisplaySubmit(formObject) {
-          google.script.run.withSuccessHandler($scope.LoadData())
-            .withFailureHandler(function(err) {
-              alert(err);
-              $scope.LoadData();
-            })
-            .setup_SaveClosedFormDisplayInfo(formObject);
+
+        $scope.onClosedFormDisplaySubmit = function() {
+          try {
+            $scope.isLoading = true;
+            google.script.run.withSuccessHandler(function(closedFormDisplayInfo) {
+              $scope.data.ClosedFormDisplayInfo = closedFormDisplayInfo;
+              $scope.isLoading = false;
+              $scope.master = angular.copy($scope.data);
+              $scope.$apply();
+            }).withFailureHandler(function(err) {
+              $scope.isLoading = false;
+              $scope.$apply();
+              showErrorMessage(err, "setup_SaveClosedFormDisplayInfo");
+            }).setup_SaveClosedFormDisplayInfo($scope.data.ClosedFormDisplayInfo);
+          } catch(err) {
+            $scope.isLoading = false;
+            showErrorMessage(err, "onClosedFormDisplaySubmit");
+          }
+        };
+
+        $scope.resetClosedFormDisplay = function() {
+          $scope.data.ClosedFormDisplayInfo = angular.copy($scope.master.ClosedFormDisplayInfo);
           return;
-        }**/
+        };
+
+        $scope.removeCategory = function(id) {
+          try {
+            $scope.isLoading = true;
+            google.script.run.withSuccessHandler(function(categories) {
+              $scope.data.Categories = categories;
+              $scope.isLoading = false;
+              $scope.master = angular.copy($scope.data);
+              $scope.$apply();
+            }).withFailureHandler(function(err) {
+              $scope.isLoading = false;
+              $scope.$apply();
+              showErrorMessage(err, "setup_RemoveCategory");
+            }).setup_RemoveCategory(id);
+          } catch(err) {
+            $scope.isLoading = false;
+            showErrorMessage(err, "removeCategory");
+          }
+        };
+
+        $scope.onNewCategorySubmit = function() {
+          try {
+            $scope.isLoading = true;
+            google.script.run.withSuccessHandler(function(categories) {
+              $scope.newCategory = {};
+              $scope.data.Categories = categories;
+              $scope.isLoading = false;
+              $scope.master = angular.copy($scope.data);
+              $scope.$apply();
+            }).withFailureHandler(function(err) {
+              $scope.isLoading = false;
+              $scope.$apply();
+              showErrorMessage(err, "setup_AddCategory");
+            }).setup_AddCategory($scope.newCategory);
+          } catch(err) {
+            $scope.isLoading = false;
+            showErrorMessage(err, "onNewCategorySubmit");
+          }
+        };
+
+        $scope.setInitialClosedVotingState = function() {
+          try {
+            $scope.isLoading = true;
+            google.script.run.withSuccessHandler(function() {
+              $scope.isLoading = false;
+              $scope.$apply();
+            }).withFailureHandler(function(err) {
+              $scope.isLoading = false;
+              $scope.$apply();
+              showErrorMessage(err, "setup_SetInitialClosedVotingState");
+            }).setup_SetInitialClosedVotingState();
+          } catch(err) {
+            $scope.isLoading = false;
+            showErrorMessage(err, "setInitialClosedVotingState");
+          }
+        };
 
         $scope.LoadData();
 

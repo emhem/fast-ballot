@@ -14,6 +14,24 @@ export module Accessors {
     return;
   }
 
+  export function GetShowPreVotingCategoryPreview(): boolean {
+    let val = PropertiesService.getDocumentProperties().getProperty("SHOW_PRE_VOTING_CATEGORY_PREVIEW");
+    if (val && val==="1") {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  export function SetShowPreVotingCategoryPreview(value: boolean): void {
+    if (value) {
+      PropertiesService.getDocumentProperties().setProperty("SHOW_PRE_VOTING_CATEGORY_PREVIEW", "1");
+    } else {
+      PropertiesService.getDocumentProperties().setProperty("SHOW_PRE_VOTING_CATEGORY_PREVIEW", "0");
+    }
+    return;
+  }
+
   export function GetPostVotingMessage(): string {
     let val = PropertiesService.getDocumentProperties().getProperty("POST_VOTING_MESSAGE");
     if (val) {
@@ -25,6 +43,24 @@ export module Accessors {
 
   export function SetPostVotingMessage(message: string): void {
     PropertiesService.getDocumentProperties().setProperty("POST_VOTING_MESSAGE", message);
+    return;
+  }
+
+  export function GetIsUsingPostVotingMessage(): boolean {
+    let val = PropertiesService.getDocumentProperties().getProperty("IS_USING_POST_VOTING_MESSAGE");
+    if (val && val==="1") {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  export function SetIsUsingPostVotingMessage(value: boolean): void {
+    if (value) {
+      PropertiesService.getDocumentProperties().setProperty("IS_USING_POST_VOTING_MESSAGE", "1");
+    } else {
+      PropertiesService.getDocumentProperties().setProperty("IS_USING_POST_VOTING_MESSAGE", "0");
+    }
     return;
   }
 
@@ -81,7 +117,8 @@ export module Accessors {
   }
 
   export function AddEntry(entry: Entry): void {
-    const lastIdx = parseInt(PropertiesService.getDocumentProperties().getProperty("ENTRIES_LAST_IDX"));
+    let lastIdx = parseInt(PropertiesService.getDocumentProperties().getProperty("ENTRIES_LAST_IDX"));
+    if (!lastIdx) { lastIdx = 0; }
     const newIdx = lastIdx+1;
     PropertiesService.getDocumentProperties().setProperty("ENTRIES_NAME_" + newIdx, entry.Name);
     PropertiesService.getDocumentProperties().setProperty("ENTRIES_DESCRIPTION_" + newIdx, entry.Description);

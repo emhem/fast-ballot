@@ -16,14 +16,13 @@ function onOpen(e: GoogleAppsScript.Events.FormsOnOpen): void {
   FormApp.getUi().createMenu("Fast Ballot")
     .addItem("Summary", "showSummarySidebar")
     .addItem("1. Basic Setup & Set Categories", "showSetupDialog")
-    .addItem("2. Make the Link Public", "showPublicLink")
-    .addItem("4. Add Entries", "showEntriesDialog")
-    .addItem("5. Open Voting", "showOpenVotingPrompt")
-    .addItem("6. Close Voting & Tabulate Results", "closeVotingAndShowResultsDialog")
+    .addItem("2. Add Entries", "showEntriesDialog")
+    .addItem("3. Open Voting", "showOpenVotingPrompt")
+    .addItem("4. Close Voting & Tabulate Results", "closeVotingAndShowResultsDialog")
     .addToUi();
 
 
-    //.addItem("3. Set Categories", "showCategoriesDialog")
+    //.addItem("2. Make the Link Public", "showPublicLink")
   return;
 }
 
@@ -52,13 +51,6 @@ function showPublicLink() {
   // Not accepting responses initially
   FastBallotApis.CloseVoting(false);
 
-}
-
-function showCategoriesDialog() {
-  const html = HtmlService.createTemplateFromFile("views/categories").evaluate()
-    .setTitle("Fast Ballot - Categories");
-  FormApp.getUi().showModalDialog(html, "Fast Ballot - Categories");
-  return;
 }
 
 function showEntriesDialog() {

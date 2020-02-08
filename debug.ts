@@ -11,6 +11,11 @@ function test_AddCategory() {
   return;
 }
 
+function test_GetEntries() {
+  Logger.log(JSON.stringify(Accessors.GetEntries()));
+  return;
+}
+
 function test_PrintAllDocPropertyValues() {
   const keys = PropertiesService.getDocumentProperties().getKeys();
   for (let key of keys) {
@@ -22,6 +27,15 @@ function clearAllCategories() {
   const keys = PropertiesService.getDocumentProperties().getKeys();
   for (let key of keys) {
     if (key.indexOf("CATEGORIES_") > -1) {
+      PropertiesService.getDocumentProperties().deleteProperty(key);
+    }
+  }
+}
+
+function clearAllEntries() {
+  const keys = PropertiesService.getDocumentProperties().getKeys();
+  for (let key of keys) {
+    if (key.indexOf("ENTRIES_") > -1) {
       PropertiesService.getDocumentProperties().deleteProperty(key);
     }
   }

@@ -2,22 +2,118 @@
 <html>
   <head>
     <base target="_top">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
   </head>
-  <body>
-    <h1>Entries</h1>
-
-    {Show existing entries}
-    {Button to add a new entry}
-
-    <form>
-      <label>Entry Name:</label>
-      <input type="text" />
-
-      <label>Entry Details:</label>
-      <input type="text" />
-    </form>
+  <body ng-app="myApp" ng-controller="myCtrl" class="w3-container">
+    <div class="w3-bar w3-top">
+      <h1 class="w3-xlarge">Entries - {{data.Entries.length}}</h1>
+    </div>
+    <div class="w3-container w3-padding-64">
+      <ul class="w3-ul w3-border">
+        <li class="w3-row"  ng-repeat="entry in data.Entries">
+          <span ng-click="removeEntry(entry.ID)" class="w3-col w3-right w3-button w3-xlarge" style="width:75px">&times;</span>
+          <div class="w3-rest">
+            <span class="w3-large">{{entry.Name}}</span><br>
+            <span class="w3-small">{{entry.Description}}</span>
+          </div>
+        </li>
+        <li>
+            <h2 class="w3-large">New Entry</h2>
+            <form ng-submit="onNewEntrySubmit()" name="newEntryForm" class="w3-container">
+              <p>
+                <label>Name:</label>
+                <input type="text" class="w3-input" ng-model="newEntry.Name" />
+              </p>
+              <p>
+                <label>Description:</label>
+                <input type="text" class="w3-input" ng-model="newEntry.Description" />
+              </p>
+              <p>
+                <input class="w3-btn" type="submit" value="Submit" ng-disabled="newEntryForm.$pristine || newEntryForm.$invalid" />
+                <input class="w3-btn w3-right" type="reset" value="Reset" ng-disabled="newEntryForm.$pristine" />
+              </p>
+            </form>
+          </li>
+        </ul>
+      </div>
 
     <input type="button" value="Close"
         onclick="google.script.host.close()" />
+
+
+    <script type="text/javascript">
+
+    function showErrorMessage(error, source) {
+      alert("An Error Occurred: " + error);
+      console.error("An error occurred at " + source + ": " + error);
+    }
+
+      var app = angular.module("myApp", []);
+      app.controller("myCtrl", function($scope) {
+
+        /* Load Data */
+        $scope.LoadData = function() {
+          try {
+            $scope.newEntry = {};
+            $scope.isLoading = true;
+            google.script.run.withSuccessHandler(function(data) {
+              $scope.isLoading = false;
+              $scope.data = data;
+              $scope.$apply();
+            }).withFailureHandler(function(err) {
+              $scope.isLoading = false;
+              $scope.$apply();
+              showErrorMessage(err, "entries_GetData");
+            }).entries_GetData();
+          } catch(err) {
+            $scope.isLoading = false;
+            showErrorMessage(err, "LoadData");
+          }
+
+          return;
+        };
+
+        $scope.removeEntry = function(id) {
+          try {
+            $scope.isLoading = true;
+            google.script.run.withSuccessHandler(function(entries) {
+              $scope.data.Entries = entries;
+              $scope.isLoading = false;
+              $scope.$apply();
+            }).withFailureHandler(function(err) {
+              $scope.isLoading = false;
+              $scope.$apply();
+              showErrorMessage(err, "entries_RemoveEntry");
+            }).entries_RemoveEntry(id);
+          } catch(err) {
+            $scope.isLoading = false;
+            showErrorMessage(err, "removeEntry");
+          }
+        };
+
+        $scope.onNewEntrySubmit = function() {
+          try {
+            $scope.isLoading = true;
+            google.script.run.withSuccessHandler(function(entries) {
+              $scope.newEntry = {};
+              $scope.data.Entries = entries;
+              $scope.isLoading = false;
+              $scope.$apply();
+            }).withFailureHandler(function(err) {
+              $scope.isLoading = false;
+              $scope.$apply();
+              showErrorMessage(err, "entries_AddEntry");
+            }).entries_AddEntry($scope.newEntry);
+          } catch(err) {
+            $scope.isLoading = false;
+            showErrorMessage(err, "onNewEntrySubmit");
+          }
+        };
+
+        $scope.LoadData();
+
+      });
+    </script>
   </body>
 </html>
