@@ -144,29 +144,34 @@ export module Accessors {
     const items = form.getItems();
     const responses = form.getResponses();
     const results: Result[] = [];
+
     for (let item of items) {
-      let voteCounts: { [choiceTitle: string]: number } = {};
-      let sortedVotes: {choiceTitle: string, numVotes: number}[] = [];
+      let voteCounts: { [EntryName: string]: number } = {};
       for (let response of responses) {
         let resultForItem = response.getResponseForItem(item).getResponse().toString();
-        voteCounts[resultForItem]++;
+        if (voteCounts[resultForItem]) {
+          voteCounts[resultForItem]++;
+        } else {
+          voteCounts[resultForItem]=1;
+        }
       }
 
       // Construct sorted votes object
+      let sortedVotes: EntryVotes[] = [];
       for (let choiceTitle in voteCounts) {
-        sortedVotes.push({
-          choiceTitle: choiceTitle,
-          numVotes: voteCounts[choiceTitle]
-        });
+        let entryVotes = new EntryVotes();
+        entryVotes.EntryName = choiceTitle;
+        entryVotes.NumVotes = voteCounts[choiceTitle];
+        sortedVotes.push(entryVotes);
       }
 
-      sortedVotes.sort((a: {choiceTitle: string, numVotes: number}, b: {choiceTitle: string, numVotes: number}): number => {
-        return (b.numVotes - a.numVotes);
+      sortedVotes.sort((a: EntryVotes, b: EntryVotes): number => {
+        return (b.NumVotes - a.NumVotes);
       });
 
       let result = new Result();
       result.Category = item.getTitle();
-      result.Results = sortedVotes;
+      result.ResponseSummary = sortedVotes;
       results.push(result);
     }
 
@@ -175,7 +180,12 @@ export module Accessors {
 
   export class Result {
     Category: string;
-    Results: any[];
+    ResponseSummary: EntryVotes[];
+  }
+
+  export class EntryVotes {
+    EntryName: string;
+    NumVotes: number;
   }
 
 

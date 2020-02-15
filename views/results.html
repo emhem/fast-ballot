@@ -2,11 +2,66 @@
 <html>
   <head>
     <base target="_top">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
   </head>
-  <body>
-    <h1>Results</h1>
-    Show the top 3 for each one!
+  <body ng-app="myApp" ng-controller="myCtrl" class="w3-container">
+    <h1 class="w3-xlarge">Results</h1>
+    <div class="w3-container w3-padding-64">
+      <ul class="w3-ul w3-border">
+        <li class="w3-row"  ng-repeat="result in data">
+          <h2 class="w3-large">{{result.Category}}</h2>
+          <table class="w3-table w3-bordered w3-border">
+            <tr ng-repeat="votes in result.ResponseSummary">
+              <td>{{votes.EntryName}}</td>
+              <td>{{votes.NumVotes}}</td>
+            </tr>
+          </table>
+          <div class="w3-col">
+            <span class="w3-large"></span><br>
+            <span class="w3-small"></span>
+          </div>
+        </li>
+      </ul>
+    </div>
     <input type="button" value="Close"
         onclick="google.script.host.close()" />
+
+    <script type="text/javascript">
+
+      function showErrorMessage(error, source) {
+        alert("An Error Occurred: " + error);
+        console.error("An error occurred at " + source + ": " + error);
+      }
+
+      var app = angular.module("myApp", []);
+      app.controller("myCtrl", function($scope) {
+
+        /* Load Data */
+        $scope.LoadData = function() {
+          try {
+            $scope.isLoading = true;
+            google.script.run.withSuccessHandler(function(results) {
+              $scope.isLoading = false;
+              $scope.data = results;
+              $scope.$apply();
+            }).withFailureHandler(function(err) {
+              $scope.isLoading = false;
+              $scope.$apply();
+              showErrorMessage(err, "results_GetData");
+            }).results_GetData();
+          } catch(err) {
+            $scope.isLoading = false;
+            showErrorMessage(err, "LoadData");
+          }
+          return;
+        };
+
+
+
+        $scope.LoadData();
+
+      });
+    </script>
   </body>
 </html>

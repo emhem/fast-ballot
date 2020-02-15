@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <style>
+      .eah-fixed-overlay {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+
+      .eah-layout {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+      }
+
+      .eah-body {
+        flex-grow: 1;
+      }
+
+      .eah-footer {
+        flex-grow: 0;
+      }
+    </style>
+  </head>
+  <body ng-app="myApp" ng-controller="myCtrl" class="w3-container">
+    <div class="w3-light-grey w3-opacity eah-fixed-overlay" ng-show="isLoading">Please hold...</div>
+    <div class="eah-layout">
+      <form ng-submit="SaveData()" name="myForm">
+        <div class="eah-body w3-container">
+          <p>What do people see when voting is closed?</p>
+          <p>
+            <label><b>Before voting has opened they'll see:</b></label>
+            <input type="text" class="w3-input" name="PreVotingMessage" ng-model="data.PreVotingMessage" />
+            <label><input type="checkbox" class="w3-check" ng-model="data.ShowPreVotingCategoryPreview" />Include a preview of the categories</label>
+          </p>
+          <p>
+            <label><b>After voting has closed they'll see:</b></label>
+            <input type="text" class="w3-input" ng-model="data.PostVotingMessage" />
+          </p>
+        </div>
+        <div class="eah-footer w3-container">
+          <input class="w3-btn" type="submit" value="Submit" ng-disabled="myForm.$pristine || myForm.$invalid" />
+          <input class="w3-btn w3-right" ng-click="reset()" onclick="this.markAllPristine()" type="button" value="Reset" ng-disabled="myForm.$pristine" />
+        </div>
+      </form>
+    </div>
+    <?!= include('views/closedFormDisplay/closedFormDisplayBehaviorJS'); ?>
+  </body>
+</html>

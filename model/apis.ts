@@ -1,4 +1,5 @@
 import { Accessors } from "./accessors";
+import { FormSettingsApis as Settings,FormStateApis as State } from "./formStateApis";
 
 export module FastBallotApis {
 
@@ -54,6 +55,35 @@ export module FastBallotApis {
     const form = FormApp.getActiveForm();
     const categories = Accessors.GetCategories();
     const entries = Accessors.GetEntries();
+
+    // Delete existing items
+    const existingItems = form.getItems();
+    existingItems.forEach((item: GoogleAppsScript.Forms.Item)=>{
+      let idx = item.getIndex();
+      form.deleteItem(idx);
+    });
+
+    // Clear existing responses
+    form.deleteAllResponses();
+
+    // Create question create
+    let template = form.addMultipleChoiceItem();
+    template.setChoiceValues(entries.map((entry: Accessors.Entry)=>{
+      let text = entry.Name;
+      if (entry.Description) {
+        text += " ~ " + entry.Description;
+      }
+      return text;
+    }));
+
+    // Create new items
+    for (let category of categories) {
+      template.duplicate().setTitle(category.Title).setHelpText(category.Description);
+    }
+
+    // Delete the template
+    form.deleteItem(template.getIndex());
+
     return;
   }
 
@@ -62,3 +92,5 @@ export module FastBallotApis {
     form.setAcceptingResponses(true);
   }
 }
+
+export { FormSettingsApis as Settings,FormStateApis as State } from "./formStateApis";

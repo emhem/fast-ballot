@@ -10,7 +10,7 @@ export function setup_GetData(): ISetupData {
       PostVotingMessage: Accessors.GetPostVotingMessage()
     },
     Categories: Accessors.GetCategories(),
-    FormURL: form.getPublishedUrl()
+    FormURL: form.shortenFormUrl(form.getPublishedUrl())
   }
 }
 

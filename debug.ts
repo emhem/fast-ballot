@@ -16,6 +16,11 @@ function test_GetEntries() {
   return;
 }
 
+function test_GetResults() {
+  Logger.log(JSON.stringify(Accessors.GetResults()));
+  return;
+}
+
 function test_PrintAllDocPropertyValues() {
   const keys = PropertiesService.getDocumentProperties().getKeys();
   for (let key of keys) {
