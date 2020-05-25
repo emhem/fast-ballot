@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+  </head>
+  <body ng-app="myApp" ng-controller="myCtrl" class="w3-container">
+    <h1>Fast Ballot</h1>
+
+    <section ng-show="Data.FormURL==null">
+      <div>
+        <button>Create a New Fast Ballot Form</button>
+        <span>or</span>
+        <div>
+          <label>Enter the URL of an existing Fast Ballot Form</label>
+          <input type="text" />
+          <button>Ok</button>
+      </div>
+      <div>
+        <label>Title</label>
+        <input type="text" />
+        <label>Description</label>
+        <textarea name="name" rows="8" cols="80"></textarea>
+        <label>Closed Form Message</label>
+        <input type="text">
+        <div>
+          <h3>Categories</h3>
+        </div>
+        <button>Save</button>
+        <button>Create</button>
+      </div>
+    </section>
+
+    <!-- Enter entries -->
+    <div ng-hide="Data.FormID == null">
+      Enter entries
+    </div>
+
+    <div>
+      Iframe preview
+    </div>
+
+    <?!= include('javascript') ?>
+
+  </body>
+</html>

@@ -1,0 +1,38 @@
+<script type="text/javascript">
+
+  function showErrorMessage(error, source) {
+    alert("An Error Occurred: " + error);
+    console.error("An error occurred at " + source + ": " + error);
+  }
+
+  var app = angular.module("myApp", []);
+  app.controller("myCtrl", function($scope) {
+    $scope.Data = {
+      FormID: null,
+      FormURL: null,
+      NewFormData: {},
+      EntriesData: [],
+    };
+
+    /* Load Data */
+    $scope.LoadData = function() {
+      try {
+        $scope.isLoading = true;
+        google.script.run.withSuccessHandler(function(results) {
+          $scope.isLoading = false;
+          $scope.data = results;
+          $scope.$apply();
+        }).withFailureHandler(function(err) {
+          $scope.isLoading = false;
+          $scope.$apply();
+          showErrorMessage(err, "results_GetData");
+        }).results_GetData();
+      } catch(err) {
+        $scope.isLoading = false;
+        showErrorMessage(err, "LoadData");
+      }
+      return;
+    };
+
+  });
+</script>
